@@ -1,19 +1,19 @@
 class Api::RecipesController < ApplicationController
   def index
-    @recipes = Recipe.all
+      @recipes = Recipe.all
 
-    search_term = params[:search]
-    if search_term
-      @recipes = @recipes.where("title iLIKE ?", "%#{search_term}%")
-    end
+      search_term = params[:search]
+      if search_term
+        @recipes = @recipes.where("title iLIKE ?", "%#{search_term}%")
+      end
 
-    render 'index.json.jbuilder'
+      render 'index.json.jbuilder'
   end
 
   def create
     @recipe = Recipe.new(
                          title: params[:title],
-                         chef: params[:chef],
+                         user_id: current_user.id,
                          ingredients: params[:ingredients],
                          directions: params[:directions],
                          prep_time: params[:prep_time],
@@ -24,6 +24,7 @@ class Api::RecipesController < ApplicationController
   end
 
   def show
+    puts "headers: #{request.headers["Authorization"]}"
     recipe_id = params[:id]
     @recipe = Recipe.find(recipe_id)
 
@@ -35,7 +36,6 @@ class Api::RecipesController < ApplicationController
     @recipe = Recipe.find(recipe_id)
 
     @recipe.title = params[:title] || @recipe.title
-    @recipe.chef = params[:chef] || @recipe.chef
     @recipe.ingredients = params[:ingredients] || @recipe.ingredients
     @recipe.directions = params[:directions] || @recipe.directions
     @recipe.prep_time = params[:prep_time] || @recipe.prep_time
