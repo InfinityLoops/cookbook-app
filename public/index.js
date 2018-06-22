@@ -12,16 +12,39 @@ var HomePage = {
   computed: {}
 };
 
-var SamplePage = {
-  template: "#sample-page",
+var RecipesNewPage = {
+  template: "#recipes-new-page",
   data: function() {
     return {
-      message: "Welcome to the Sample Dome"
+      title: "",
+      ingredients: "",
+      directions: "",
+      prepTime: "",
+      imageURL: "",
+      errors: []
     };
   },
-  created: function() {},
-  methods: {},
-  computed: {}
+  methods: {
+    submit: function() {
+      var params = {
+        title: this.title,
+        ingredients: this.ingredients,
+        directions: this.directions,
+        prep_time: this.prepTime,
+        image_url: this.imageURL
+      };
+      axios
+        .post("/api/recipes", params)
+        .then(function(response) {
+          router.push("/#/");
+        })
+        .catch(
+          function(error) {
+            this.errors = error.response.data.errors;
+          }.bind(this)
+        );
+    }
+  }
 };
 
 var SignupPage = {
@@ -102,10 +125,10 @@ var LogoutPage = {
 var router = new VueRouter({
   routes: [
             { path: "/", component: HomePage },
-            { path: '/sample', component: SamplePage },
             { path: "/signup", component: SignupPage },
             { path: "/login", component: LoginPage },
-            { path: "/logout", component: LogoutPage }
+            { path: "/logout", component: LogoutPage },
+            { path: "/recipes/new", component: RecipesNewPage }
           ],
   scrollBehavior: function(to, from, savedPosition) {
     return { x: 0, y: 0 };
