@@ -1,20 +1,40 @@
-var recipeTemplate = document.querySelector('#recipe-card');
-var recipeRowElement = document.querySelector('.row');
+/* global Vue, VueRouter, axios */
 
-axios.get("http://localhost:3000/api/recipes").then(function(response) {
-  var recipes = response.data;
-  
-  recipes.forEach(function(recipe) {
-    var recipeClone = recipeTemplate.content.cloneNode(true);
+var HomePage = {
+  template: "#home-page",
+  data: function() {
+    return {
+      message: "Welcome to Vue.js!"
+    };
+  },
+  created: function() {},
+  methods: {},
+  computed: {}
+};
 
-    recipeClone.querySelector(".card-title").innerText = recipe.title;
-    recipeClone.querySelector(".chef").innerText = recipe.chef;
-    recipeClone.querySelector(".prep-time").innerText = recipe.formatted.prep_time;
-    recipeClone.querySelector(".card-img-top").src = recipe.image_url;
+var SamplePage = {
+  template: "#sample-page",
+  data: function() {
+    return {
+      message: "Welcome to the Sample Dome"
+    };
+  },
+  created: function() {},
+  methods: {},
+  computed: {}
+};
 
-
-    recipeRowElement.appendChild(recipeClone);
-  });
+var router = new VueRouter({
+  routes: [
+            { path: "/", component: HomePage },
+            { path: '/sample', component: SamplePage }
+          ],
+  scrollBehavior: function(to, from, savedPosition) {
+    return { x: 0, y: 0 };
+  }
 });
 
-
+var app = new Vue({
+  el: "#vue-app",
+  router: router
+});
