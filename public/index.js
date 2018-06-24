@@ -1,13 +1,66 @@
 /* global Vue, VueRouter, axios */
 
-var HomePage = {
-  template: "#home-page",
+// var HomePage = {
+//   template: "#home-page",
+//   data: function() {
+//     return {
+//       message: "Welcome to Vue.js!"
+//     };
+//   },
+//   created: function() {},
+//   methods: {},
+//   computed: {}
+// };
+
+var RecipesIndexPage = {
+  template: "#recipes-index-page",
   data: function() {
     return {
-      message: "Welcome to Vue.js!"
+      recipes: []
     };
   },
-  created: function() {},
+  created: function() {
+    axios
+    .get("/api/recipes")
+    .then(function(response) {
+      this.recipes = response.data;
+    }.bind(this));
+  },
+  methods: {},
+  computed: {}
+};
+
+var RecipesShowPage = {
+  template: "#recipes-show-page",
+  data: function() {
+    return { 
+      recipe: {
+        id: "",
+        title: "",
+        ingredients: "",
+        directions: "",
+        chef: "",
+        prep_time: "",
+        image_url: "",
+        formatted: [
+          {
+            prep_time: "",
+            ingredients: [],
+            directions: [],
+            created_at: ""
+          }
+        ],
+
+      }
+    };
+  },
+  created: function() {
+    axios
+    .get("/api/recipes/" + this.$route.params.id )
+    .then(function(response) {
+      this.recipe = response.data;
+    }.bind(this));
+  },
   methods: {},
   computed: {}
 };
@@ -124,11 +177,13 @@ var LogoutPage = {
 
 var router = new VueRouter({
   routes: [
-            { path: "/", component: HomePage },
+            { path: "/", component: RecipesIndexPage },
             { path: "/signup", component: SignupPage },
             { path: "/login", component: LoginPage },
             { path: "/logout", component: LogoutPage },
-            { path: "/recipes/new", component: RecipesNewPage }
+            { path: "/recipes", component: RecipesIndexPage },
+            { path: "/recipes/new", component: RecipesNewPage },
+            { path: "/recipes/:id", component: RecipesShowPage }
           ],
   scrollBehavior: function(to, from, savedPosition) {
     return { x: 0, y: 0 };
